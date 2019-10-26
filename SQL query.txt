@@ -1,0 +1,636 @@
+#5: Draft
+select * from
+(select ci.ci_id, ci.ci_parent_id, ci.ci_room_label,cipp.ci_parent_3_id,
+       coalesce( (select distinct cd.customer_company from customer_relation cr, customer_data cd where ( cr.ci_id = ci.ci_parent_id and cr.customer_id = cd.customer_id)),
+                 (select distinct cd.customer_company from configuration_item ci2, customer_relation cr, customer_data cd where (ci2.ci_id = ci.ci_parent_id and cr.ci_id = ci2.ci_parent_id and cr.customer_id = cd.customer_id))) as customer_name,
+       coalesce( (select distinct cd.customer_department from customer_relation cr, customer_data cd where ( cr.ci_id = ci.ci_parent_id and cr.customer_id = cd.customer_id)),
+                 (select distinct cd.customer_department from configuration_item ci2, customer_relation cr, customer_data cd where (ci2.ci_id = ci.ci_parent_id and cr.ci_id = ci2.ci_parent_id and cr.customer_id = cd.customer_id))) as customer_dept,                                  
+       ci.ci_name, ci.ci_location, (select ci2.ci_logic_name from configuration_item ci2 where ci2.ci_id = ci.ci_parent_id) as parent_name,
+       (select ci2.ci_type from configuration_item ci2 where ci2.ci_id = ci.ci_parent_id) as parent_type,
+       (select ci2.ci_logic_name from configuration_item ci2 where ci2.ci_id = cipp.ci_parent_3_id) as powersource_name,
+       (select ci2.ci_type from configuration_item ci2 where ci2.ci_id = cipp.ci_parent_3_id) as powersource_type,
+       (select coalesce( case true 
+ 
+  when ci_parent_6_type like 'Pdu' then ci_parent_6_name end,
+  case when ci_parent_5_type like 'Pdu' then ci_parent_5_name end,
+  case when ci_parent_4_type like 'Pdu' then ci_parent_4_name end,
+  case when ci_parent_3_type like 'Pdu' then ci_parent_3_name end,
+  case when ci_parent_2_type like 'Pdu' then ci_parent_2_name end,
+  case when ci_parent_1_type like 'Pdu' then ci_parent_1_name end,
+  'NA'
+   )from configuration_item_power_path cipp )as Pdu_powersource,
+																																	
+    
+       (select ci.ci_type) as type,       
+       coalesce(cipp.pp_breaker_label,ci.ci_name,ci.ci_logic_name) as cage_name,      
+       cipp.pp_breaker_panel_label, cipp.pp_breaker_label as BreakerName, cipp.pp_breaker_power_phase, cipp.pp_breaker_size,
+       cip.cip_value as BreakerType,
+       cipp.pp_peak_power as peak_watts, cipp.pp_peak_amps as peak_amps
+  from configuration_item ci,
+  configuration_item_power_path cipp,
+  --configuration_item_tag cit,
+  configuration_item_property cip
+where ci.ci_type = 'PowerReceptacle'
+   and ci.ci_id = cipp.ci_id
+   and ci.ci_id = cip.ci_id and cip.cip_name = 'receptacle_type'
+-- 'zzz'
+   order by customer_dept, ci.ci_name
+																																	
+) as receptaudit
+-- 'yyy
+###############################################################
+select * from
+(select ci.ci_id, ci.ci_parent_id, ci.ci_room_label,cipp.ci_parent_3_id,
+       coalesce( (select distinct cd.customer_company from customer_relation cr, customer_data cd where ( cr.ci_id = ci.ci_parent_id and cr.customer_id = cd.customer_id)),
+                 (select distinct cd.customer_company from configuration_item ci2, customer_relation cr, customer_data cd where (ci2.ci_id = ci.ci_parent_id and cr.ci_id = ci2.ci_parent_id and cr.customer_id = cd.customer_id))) as customer_name,
+       coalesce( (select distinct cd.customer_department from customer_relation cr, customer_data cd where ( cr.ci_id = ci.ci_parent_id and cr.customer_id = cd.customer_id)),
+                 (select distinct cd.customer_department from configuration_item ci2, customer_relation cr, customer_data cd where (ci2.ci_id = ci.ci_parent_id and cr.ci_id = ci2.ci_parent_id and cr.customer_id = cd.customer_id))) as customer_dept,                                  
+       ci.ci_name, ci.ci_location, (select ci2.ci_logic_name from configuration_item ci2 where ci2.ci_id = ci.ci_parent_id) as parent_name,
+       (select ci2.ci_type from configuration_item ci2 where ci2.ci_id = ci.ci_parent_id) as parent_type,
+       (select ci2.ci_logic_name from configuration_item ci2 where ci2.ci_id = cipp.ci_parent_3_id) as powersource_name,
+       (select ci2.ci_type from configuration_item ci2 where ci2.ci_id = cipp.ci_parent_3_id) as powersource_type,
+  
+    
+       (select ci.ci_type) as type,       
+       coalesce(cipp.pp_breaker_label,ci.ci_name,ci.ci_logic_name) as cage_name,      
+       cipp.pp_breaker_panel_label, cipp.pp_breaker_label as BreakerName, cipp.pp_breaker_power_phase, cipp.pp_breaker_size,
+       cip.cip_value as BreakerType,
+       cipp.pp_peak_power as peak_watts, cipp.pp_peak_amps as peak_amps
+  from configuration_item ci,
+  configuration_item_power_path cipp,
+  --configuration_item_tag cit,
+  configuration_item_property cip
+where ci.ci_type = 'PowerReceptacle'
+   and ci.ci_id = cipp.ci_id
+   and ci.ci_id = cip.ci_id and cip.cip_name = 'receptacle_type'
+-- 'zzz'
+   order by customer_dept, ci.ci_name
+																																	
+) as receptaudit
+-- 'yyy
+left outer join 
+(select cipp.ci_id ,
+case true 
+  when ci_parent_11_type like 'Pdu' then ci_parent_11_name
+  when ci_parent_10_type like 'Pdu' then ci_parent_10_name
+  when ci_parent_9_type like 'Pdu' then ci_parent_9_name
+  when ci_parent_8_type like 'Pdu' then ci_parent_8_name
+  when ci_parent_7_type like 'Pdu' then ci_parent_7_name
+  when ci_parent_6_type like 'Pdu' then ci_parent_6_name
+  when ci_parent_5_type like 'Pdu' then ci_parent_5_name
+  when ci_parent_4_type like 'Pdu' then ci_parent_4_name
+  when ci_parent_3_type like 'Pdu' then ci_parent_3_name
+  when ci_parent_2_type like 'Pdu' then ci_parent_2_name
+  when ci_parent_1_type like 'Pdu' then ci_parent_1_name
+  else cipp.ci_name
+  end as Pdu_powersource, 
+  case true 
+  when ci_parent_11_type like 'Pdu' then ci_parent_11_id
+  when ci_parent_10_type like 'Pdu' then ci_parent_10_id
+  when ci_parent_9_type like 'Pdu' then ci_parent_9_id
+  when ci_parent_8_type like 'Pdu' then ci_parent_8_id
+  when ci_parent_7_type like 'Pdu' then ci_parent_7_id
+  when ci_parent_6_type like 'Pdu' then ci_parent_6_id
+  when ci_parent_5_type like 'Pdu' then ci_parent_5_id
+  when ci_parent_4_type like 'Pdu' then ci_parent_4_id
+  when ci_parent_3_type like 'Pdu' then ci_parent_3_id
+  when ci_parent_2_type like 'Pdu' then ci_parent_2_id
+  when ci_parent_1_type like 'Pdu' then ci_parent_1_id
+  else cipp.ci_id
+  end as Pdu_parent_id
+from configuration_item_power_path cipp) as pdutable 
+on pdutable.Pdu_parent_id = receptaudit.ci_id
+############################################################
+select a.ci_name, a.ci_type, b.kpi_serie_type, b.kpi_value 
+from configuration_item a
+left join swo_kpi b ON a.ci_id = b.ci_id
+where b.kpi_serie_type = 'ROOM_TOTAL_AREA' AND a.ci_type = 'ServerRoom'
+order by ci_name
+
+select a.ci_name, a.ci_type, b.kpi_serie_type, round(cast((cast(b.kpi_value as double precision)*10.7639104) as room_sqft
+from configuration_item a
+left join swo_kpi b ON a.ci_id = b.ci_id
+where b.kpi_serie_type = 'ROOM_TOTAL_AREA' AND a.ci_type = 'ServerRoom'
+order by ci_name
+
+11. UPS Summary Report, UPSkpi Dataset
+
+select ci_room_label as room_name,
+       coalesce(ci_name,ci_logic_name) as ups_name,
+       ups_capacity.kpi_value as ups_capacity,
+       estimated_load.kpi_value as estimated_load,
+       failover_load.kpi_value as failover_load,
+       required_capacity.kpi_value as required_capacity,
+       ci.ci_id,
+       ci.ci_serial_number
+  from configuration_item ci
+
+left outer join
+(select kpi_value, kpi.ci_id from swo_kpi kpi where kpi.kpi_serie_type = 'POWER_CAPACITY' ) as ups_capacity on ( ci.ci_id = ups_capacity.ci_id )
+left outer join
+(select kpi_value, kpi.ci_id from swo_kpi kpi where kpi.kpi_serie_type = 'MEASURED_PEAK_LOAD' ) as estimated_load on ( ci.ci_id = estimated_load.ci_id )
+left outer join
+(select kpi_value, kpi.ci_id from swo_kpi kpi where kpi.kpi_serie_type = 'MEASURED_TRANSFERRED_LOAD' ) as failover_load on ( ci.ci_id = failover_load.ci_id )
+left outer join
+(select kpi_value, kpi.ci_id from swo_kpi kpi where kpi.kpi_serie_type = 'POWER_CAPACITY_NEEDED' ) as required_capacity on ( ci.ci_id = required_capacity.ci_id )
+
+where ci.ci_type = 'Ups'
+order by room_name, ups_name
+
+
+select ci_room_label as room_name,
+       coalesce(ci_name,ci_logic_name) as ups_name,
+       ups_capacity.kpi_value as ups_capacity,
+       estimated_load.kpi_value as estimated_load,
+       ci.ci_id,
+       ci.ci_serial_number
+  from configuration_item ci
+
+left outer join
+(select kpi_value, kpi.ci_id from swo_kpi kpi where kpi.kpi_serie_type = 'POWER_CAPACITY' ) as ups_capacity on ( ci.ci_id = ups_capacity.ci_id )
+left outer join
+(select kpi_value, kpi.ci_id from swo_kpi kpi where kpi.kpi_serie_type = 'MEASURED_PEAK_LOAD' ) as estimated_load on ( ci.ci_id = estimated_load.ci_id )
+
+where ci.ci_type = 'Ups'
+order by room_name, ups_name
+-------------------------------------------------------------------------------------------------
+05. receptacle audit w/Peak BCM metrics
+Datasource: Cxytera_Receptacle_Audit_v3
+user: etluser_etl
+
+- datasets CustomerSelection
+Select distinct
+replace(customer_company,'''','''''') as custname,
+customer_department
+from customer_data
+where customer_company is not NULL
+ORDER BY custname, customer_department
+
+-datasets ReceptacleAudit
+
+select * from
+(select ci.ci_id, ci.ci_parent_id, ci.ci_room_label,
+       coalesce( (select distinct cd.customer_company from customer_relation cr, customer_data cd where ( cr.ci_id = ci.ci_parent_id and cr.customer_id = cd.customer_id)),
+                 (select distinct cd.customer_company from configuration_item ci2, customer_relation cr, customer_data cd where (ci2.ci_id = ci.ci_parent_id and cr.ci_id = ci2.ci_parent_id and cr.customer_id = cd.customer_id))) as customer_name,
+       coalesce( (select distinct cd.customer_department from customer_relation cr, customer_data cd where ( cr.ci_id = ci.ci_parent_id and cr.customer_id = cd.customer_id)),
+                 (select distinct cd.customer_department from configuration_item ci2, customer_relation cr, customer_data cd where (ci2.ci_id = ci.ci_parent_id and cr.ci_id = ci2.ci_parent_id and cr.customer_id = cd.customer_id))) as customer_dept,                                  
+       ci.ci_name, ci.ci_location, (select ci2.ci_logic_name from configuration_item ci2 where ci2.ci_id = ci.ci_parent_id) as parent_name,
+       (select ci2.ci_type from configuration_item ci2 where ci2.ci_id = ci.ci_parent_id) as parent_type,
+       cipp.pp_breaker_panel_label, cipp.pp_breaker_label as BreakerName, cipp.pp_breaker_power_phase, cipp.pp_breaker_size,
+       cip.cip_value as BreakerType,
+       cipp.pp_peak_power as peak_watts, cipp.pp_peak_amps as peak_amps
+  from configuration_item ci,
+  configuration_item_power_path cipp,
+  configuration_item_property cip
+where ci.ci_type = 'PowerReceptacle'
+   and ci.ci_id = cipp.ci_id
+   and ci.ci_id = cip.ci_id and cip.cip_name = 'receptacle_type'
+-- 'zzz'
+   order by customer_dept, ci.ci_name
+) as receptaudit
+-- 'yyy'
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+cipp.ci_parent_4_id, change only #1: UPS powertype, #2 PDU powertype, # 4 Power panel
+Use #3 Powersource name
+cross check with and cd.customer_id = '614107'and ci.ci_room_label='DEN2 - A - Phase 1'
+
+select * from
+(select ci.ci_id, ci.ci_parent_id, ci.ci_room_label,cipp.ci_parent_3_id,
+       coalesce( (select distinct cd.customer_company from customer_relation cr, customer_data cd where ( cr.ci_id = ci.ci_parent_id and cr.customer_id = cd.customer_id)),
+                 (select distinct cd.customer_company from configuration_item ci2, customer_relation cr, customer_data cd where (ci2.ci_id = ci.ci_parent_id and cr.ci_id = ci2.ci_parent_id and cr.customer_id = cd.customer_id))) as customer_name,
+       coalesce( (select distinct cd.customer_department from customer_relation cr, customer_data cd where ( cr.ci_id = ci.ci_parent_id and cr.customer_id = cd.customer_id)),
+                 (select distinct cd.customer_department from configuration_item ci2, customer_relation cr, customer_data cd where (ci2.ci_id = ci.ci_parent_id and cr.ci_id = ci2.ci_parent_id and cr.customer_id = cd.customer_id and cd.customer_id = '614107'))) as customer_dept,                                  
+       ci.ci_name, ci.ci_location, (select ci2.ci_logic_name from configuration_item ci2 where ci2.ci_id = ci.ci_parent_id) as parent_name,
+       (select ci2.ci_type from configuration_item ci2 where ci2.ci_id = ci.ci_parent_id) as parent_type,
+       (select ci2.ci_logic_name from configuration_item ci2 where ci2.ci_id = cipp.ci_parent_3_id) as power_source_name,
+       (select ci2.ci_type from configuration_item ci2 where ci2.ci_id = cipp.ci_parent_3_id) as power_type,
+       cipp.pp_breaker_panel_label, cipp.pp_breaker_label as BreakerName, cipp.pp_breaker_power_phase, cipp.pp_breaker_size,
+       cip.cip_value as BreakerType,
+       cipp.pp_peak_power as peak_watts, cipp.pp_peak_amps as peak_amps
+  from configuration_item ci,
+  configuration_item_power_path cipp,
+  configuration_item_property cip
+ 																														
+where   ci.ci_type = 'PowerReceptacle' cn   
+   and ci.ci_id = cipp.ci_id
+   and ci.ci_id = cip.ci_id and cip.cip_name = 'receptacle_type' 
+	and ci.ci_room_label='DEN2 - A - Phase 1'																															
+-- 'zzz'
+   order by customer_dept, ci.ci_name
+) as receptaudit
+-- 'yyy'
+
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+select * from
+(select ci.ci_id, ci.ci_parent_id, ci.ci_room_label,cipp.ci_parent_3_id,
+       coalesce( (select distinct cd.customer_company from customer_relation cr, customer_data cd where ( cr.ci_id = ci.ci_parent_id and cr.customer_id = cd.customer_id)),
+                 (select distinct cd.customer_company from configuration_item ci2, customer_relation cr, customer_data cd where (ci2.ci_id = ci.ci_parent_id and cr.ci_id = ci2.ci_parent_id and cr.customer_id = cd.customer_id))) as customer_name,
+       coalesce( (select distinct cd.customer_department from customer_relation cr, customer_data cd where ( cr.ci_id = ci.ci_parent_id and cr.customer_id = cd.customer_id)),
+                 (select distinct cd.customer_department from configuration_item ci2, customer_relation cr, customer_data cd where (ci2.ci_id = ci.ci_parent_id and cr.ci_id = ci2.ci_parent_id and cr.customer_id = cd.customer_id))) as customer_dept,                                  
+       ci.ci_name, ci.ci_location, (select ci2.ci_logic_name from configuration_item ci2 where ci2.ci_id = ci.ci_parent_id) as parent_name,
+       (select ci2.ci_type from configuration_item ci2 where ci2.ci_id = ci.ci_parent_id) as parent_type,
+       (select ci2.ci_logic_name from configuration_item ci2 where ci2.ci_id = cipp.ci_parent_3_id) as powersource_name,
+       (select ci2.ci_type from configuration_item ci2 where ci2.ci_id = cipp.ci_parent_3_id) as powersource_type,
+       cipp.pp_breaker_panel_label, cipp.pp_breaker_label as BreakerName, cipp.pp_breaker_power_phase, cipp.pp_breaker_size,
+       cip.cip_value as BreakerType,
+       cipp.pp_peak_power as peak_watts, cipp.pp_peak_amps as peak_amps
+  from configuration_item ci,
+  configuration_item_power_path cipp,
+  configuration_item_property cip
+where ci.ci_type = 'PowerReceptacle'
+   and ci.ci_id = cipp.ci_id
+   and ci.ci_id = cip.ci_id and cip.cip_name = 'receptacle_type'
+-- 'zzz'
+   order by customer_dept, ci.ci_name
+) as receptaudit
+-- 'yyy
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+- datasets RoomSelection
+select distinct ci_room_label as room_selection
+from configuration_item
+where ci_room_label is not null
+order by ci_room_label
+
+---------------------------------------------------------------------------------------------------
+54. Exception report Poles with load and no receptacle
+datasouces: 
+Operations
+panelScheduleDataSource
+datasets: panelSchedule DataSet
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#5 edited 
+select * from
+(select ci.ci_id, ci.ci_parent_id, ci.ci_room_label,cipp.ci_parent_3_id,
+       coalesce( (select distinct cd.customer_company from customer_relation cr, customer_data cd where ( cr.ci_id = ci.ci_parent_id and cr.customer_id = cd.customer_id)),
+                 (select distinct cd.customer_company from configuration_item ci2, customer_relation cr, customer_data cd where (ci2.ci_id = ci.ci_parent_id and cr.ci_id = ci2.ci_parent_id and cr.customer_id = cd.customer_id))) as customer_name,
+       coalesce( (select distinct cd.customer_department from customer_relation cr, customer_data cd where ( cr.ci_id = ci.ci_parent_id and cr.customer_id = cd.customer_id)),
+                 (select distinct cd.customer_department from configuration_item ci2, customer_relation cr, customer_data cd where (ci2.ci_id = ci.ci_parent_id and cr.ci_id = ci2.ci_parent_id and cr.customer_id = cd.customer_id))) as customer_dept,                                  
+       ci.ci_name, ci.ci_location, (select ci2.ci_logic_name from configuration_item ci2 where ci2.ci_id = ci.ci_parent_id) as parent_name,
+       (select ci2.ci_type from configuration_item ci2 where ci2.ci_id = ci.ci_parent_id) as parent_type,
+       (select ci2.ci_logic_name from configuration_item ci2 where ci2.ci_id = cipp.ci_parent_3_id) as powersource_name,
+       (select ci2.ci_type from configuration_item ci2 where ci2.ci_id = cipp.ci_parent_3_id) as powersource_type,
+       cipp.pp_breaker_panel_label, cipp.pp_breaker_label as BreakerName, cipp.pp_breaker_power_phase, cipp.pp_breaker_size,
+       cip.cip_value as BreakerType,
+       cipp.pp_peak_power as peak_watts, cipp.pp_peak_amps as peak_amps
+  from configuration_item ci,
+  configuration_item_power_path cipp,
+  configuration_item_property cip
+where ci.ci_type = 'PowerReceptacle'
+   and ci.ci_id = cipp.ci_id
+   and ci.ci_id = cip.ci_id and cip.cip_name = 'receptacle_type'
+-- 'zzz'
+   order by customer_dept, ci.ci_name
+) as receptaudit
+-- 'yyy
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Report #1 Raw Data
+SELECT
+        configuration_item.ci_id as ci_id,
+        configuration_item.ci_room_label as room_name,
+        configuration_item.ci_name as name,
+        configuration_item.ci_type as type,
+        configuration_item.ci_location as location,
+        customer_data.customer_company as customerName,
+        customer_data.customer_department as department,
+        customer_relation.power_sold as soldpower,
+        (SELECT round(cast((cast(configuration_item_property.cip_value as double precision) * 10.7639104) as numeric),2) FROM configuration_item_property WHERE configuration_item.ci_id = configuration_item_property.ci_id and configuration_item_property.cip_class = 'CageArea') CAGE_AREA_SQFT,
+        (SELECT round(cast((cast(configuration_item_property.cip_value as double precision) * 10.7639104) as numeric),2) FROM configuration_item_property WHERE configuration_item.ci_id = configuration_item_property.ci_id and configuration_item_property.cip_class = 'FloorStandingEquipmentArea') RACK_AREA_SQFT,
+        CASE 
+                WHEN configuration_item.ci_type = 'Rack' AND configuration_item.ci_model_name LIKE '%Half%' THEN 7
+                WHEN configuration_item.ci_type = 'Rack' AND configuration_item.ci_model_name LIKE '%Quarter%' THEN 3.5
+                WHEN configuration_item.ci_type = 'Rack' THEN 14 END AS RACK_AREA_SQFT_CTS,
+        array_to_string(ARRAY(SELECT cit_tag as tag FROM configuration_item_tag tags WHERE configuration_item.ci_id = tags.ci_id), ',') as tags,
+        parent_item.ci_name as containing_parentName,
+        parent_item.ci_type as containing_parentType,
+        parent_item.ci_location as containing_parentLocation,
+        configuration_item.ci_model_name as model_name,
+        '1970-01-01 00:00:00 GMT'::timestamp + ((configuration_item.state_last_updated/1000)::text)::interval AS LAST_ETL_UPDATE
+FROM
+        configuration_item
+        
+        join
+        (Select configuration_item.ci_id, configuration_item.ci_name, configuration_item.ci_type, configuration_item.ci_location 
+        from configuration_item
+        where configuration_item.ci_type in('Cage','ServerRoom','ElectricalRoom','SupportingInfrastructureSpace')) parent_item   
+         on (configuration_item.ci_parent_id = parent_item.ci_id)
+         
+         left outer join 
+         customer_relation
+         on configuration_item.ci_id = customer_relation.ci_id
+         
+         left outer join
+         customer_data
+         on customer_relation.customer_id = customer_data.customer_id
+WHERE 
+	    configuration_item.ci_type IN ('BatteryCabinet','Cage','GenericFloorPowerEquipment','Pdu','PowerPanel','Rack','Ups')
+ORDER BY 
+        room_name, name, type, parent_item.ci_type;
+
+ 
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+In the export database this query returns both cp’s and tags in the same query
+
+select ci.ci_id, ci_name, ci_logic_name, cit.cit_tag, cit.cit_description,cp., cp_name,,, cp.cp_value
+  from configuration_item ci
+left outer join configuration_item_tag cit on ci.ci_id = cit.ci_id
+left outer join custom_property cp on ci.ci_id = cp.ci_id
+where configuration_item.cit_tag IN ('Facilitized: Installed','Facilitazed: Open');
+
+The above query against the above ci_id which is from my demo server returns the following against the above rack with a pair of tags and three custom properties.
+
+Of course the query could be split into two queries, one of which grabs custom properties, the other tags … if you’re already getting custom properties from REST then the tag’s only query would be this:
+
+select ci.ci_id, ci_name, ci_logic_name, cit.cit_tag, cit.cit_description
+  from configuration_item ci, configuration_item_tag cit
+where ci.ci_id = cit.ci_id
+   and ci.ci_id = '9ac1da35-4ba5-453a-bd72-32b2bb882ebf';
+
+Which yields 
+$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+SELECT
+        configuration_item.ci_id as ci_id,
+        configuration_item.ci_room_label as room_name,
+        configuration_item.ci_name as name,
+        configuration_item.ci_type as type,
+        configuration_item.ci_location as location,
+        customer_data.customer_company as customerName,
+        customer_data.customer_department as department,
+		cit.cit_tag as tag1,
+		cp.cp_name as cp_name,
+        customer_relation.power_sold as soldpower,
+        (SELECT round(cast((cast(configuration_item_property.cip_value as double precision) * 10.7639104) as numeric),2) FROM configuration_item_property WHERE configuration_item.ci_id = configuration_item_property.ci_id and configuration_item_property.cip_class = 'CageArea') CAGE_AREA_SQFT,
+        (SELECT round(cast((cast(configuration_item_property.cip_value as double precision) * 10.7639104) as numeric),2) FROM configuration_item_property WHERE configuration_item.ci_id = configuration_item_property.ci_id and configuration_item_property.cip_class = 'FloorStandingEquipmentArea') RACK_AREA_SQFT,
+        CASE 
+                WHEN configuration_item.ci_type = 'Rack' AND configuration_item.ci_model_name LIKE '%Half%' THEN 7
+                WHEN configuration_item.ci_type = 'Rack' AND configuration_item.ci_model_name LIKE '%Quarter%' THEN 3.5
+                WHEN configuration_item.ci_type = 'Rack' THEN 14 END AS RACK_AREA_SQFT_CTS,
+        array_to_string(ARRAY(SELECT cit_tag as tag FROM configuration_item_tag tags WHERE configuration_item.ci_id = tags.ci_id), ',') as tags,
+        parent_item.ci_name as containing_parentName,
+        parent_item.ci_type as containing_parentType,
+        parent_item.ci_location as containing_parentLocation,
+        configuration_item.ci_model_name as model_name,
+        '1970-01-01 00:00:00 GMT'::timestamp + ((configuration_item.state_last_updated/1000)::text)::interval AS LAST_ETL_UPDATE
+FROM
+        configuration_item 
+		left outer join configuration_item_tag cit on configuration_item.ci_id = cit.ci_id
+		left outer join custom_property cp on configuration_item.ci_id = cp.ci_id
+        join
+        (Select configuration_item.ci_id, configuration_item.ci_name, configuration_item.ci_type, configuration_item.ci_location 
+        from configuration_item
+        where configuration_item.ci_type in('Cage','ServerRoom','ElectricalRoom','SupportingInfrastructureSpace')) parent_item   
+         on (configuration_item.ci_parent_id = parent_item.ci_id)
+         
+         left outer join 
+         customer_relation
+         on configuration_item.ci_id = customer_relation.ci_id
+         
+         left outer join
+         customer_data
+         on customer_relation.customer_id = customer_data.customer_id
+WHERE 
+	    configuration_item.ci_type IN ('BatteryCabinet','Cage','GenericFloorPowerEquipment','Pdu','PowerPanel','Rack','Ups')
+		and cit.cit_tag IN ('Facilitized: Installed','Facilitazed: Open')
+		and cp.cp_name IS NOT NULL									
+ORDER BY 
+        room_name, name, type, parent_item.ci_type;
+$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+SELECT
+        configuration_item.ci_id as ci_id,
+        configuration_item.ci_room_label as room_name,
+        configuration_item.ci_name as name,
+        configuration_item.ci_type as type,
+        configuration_item.ci_location as location,
+        customer_data.customer_company as customerName,
+        customer_data.customer_department as department,
+		cit.cit_tag as tag1,
+		cp.cp_name as cp_name,
+        customer_relation.power_sold as soldpower,
+        (SELECT round(cast((cast(configuration_item_property.cip_value as double precision) * 10.7639104) as numeric),2) FROM configuration_item_property WHERE configuration_item.ci_id = configuration_item_property.ci_id and configuration_item_property.cip_class = 'CageArea') CAGE_AREA_SQFT,
+        (SELECT round(cast((cast(configuration_item_property.cip_value as double precision) * 10.7639104) as numeric),2) FROM configuration_item_property WHERE configuration_item.ci_id = configuration_item_property.ci_id and configuration_item_property.cip_class = 'FloorStandingEquipmentArea') RACK_AREA_SQFT,
+        CASE 
+                WHEN configuration_item.ci_type = 'Rack' AND configuration_item.ci_model_name LIKE '%Half%' THEN 7
+                WHEN configuration_item.ci_type = 'Rack' AND configuration_item.ci_model_name LIKE '%Quarter%' THEN 3.5
+                WHEN configuration_item.ci_type = 'Rack' THEN 14 END AS RACK_AREA_SQFT_CTS,
+        array_to_string(ARRAY(SELECT cit_tag as tag FROM configuration_item_tag tags WHERE configuration_item.ci_id = tags.ci_id), ',') as tags,
+        parent_item.ci_name as containing_parentName,
+        parent_item.ci_type as containing_parentType,
+        parent_item.ci_location as containing_parentLocation,
+        configuration_item.ci_model_name as model_name,
+        '1970-01-01 00:00:00 GMT'::timestamp + ((configuration_item.state_last_updated/1000)::text)::interval AS LAST_ETL_UPDATE
+FROM
+        configuration_item 
+		left outer join configuration_item_tag cit on configuration_item.ci_id = cit.ci_id
+		left outer join custom_property cp on configuration_item.ci_id = cp.ci_id
+        join
+        (Select configuration_item.ci_id, configuration_item.ci_name, configuration_item.ci_type, configuration_item.ci_location 
+        from configuration_item
+        where configuration_item.ci_type in('Cage','ServerRoom','ElectricalRoom','SupportingInfrastructureSpace')) parent_item   
+         on (configuration_item.ci_parent_id = parent_item.ci_id)
+         
+         left outer join 
+         customer_relation
+         on configuration_item.ci_id = customer_relation.ci_id
+         
+         left outer join
+         customer_data
+         on customer_relation.customer_id = customer_data.customer_id
+WHERE 
+	    configuration_item.ci_type IN ('Cage','GenericFloorPowerEquipment','Rack')
+		and cit.cit_tag IN ('Facilitized: Open')
+		and customer_data.customer_company IS NOT NULL									
+ORDER BY 
+        room_name, name, type, parent_item.ci_type;
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+rerport #10: 
+SELECT DISTINCT
+ configuration_item.ci_id,
+ coalesce(configuration_item.ci_name,configuration_item.ci_logic_name) as cage_name,
+ configuration_item.ci_type as cage_type,
+ configuration_item.ci_room_label as cage_location,
+ coalesce(customer_details.customer_company,'Un-Assigned') as cage_customerName,
+ coalesce(customer.power_sold,0) as cage_soldPower,
+ coalesce(customer_details.customer_department,'Un-Assigned') as cage_department,
+ cageArea_sqrmeter,
+ cageArea_sqrfeet,
+ coalesce(rack_count.racksincage,0) as numracksincage,
+-- rack_item.ci_room_label as rack_room_name,
+-- rack_item.ci_name as rack_name,
+-- rack_item.ci_type as rack_type,
+-- rack_item.ci_location as rack_location,
+-- rack_item.ci_logic_name as rack_logic_name,
+ --CASE when receptacle_type.cip_value is null then rpdu_item.ci_model_name else receptacle_type.cip_value end as circuit_type,
+ --CASE when receptacle_type.cip_value is null then rpdu_item.ci_id else null end as rpdu_id,
+ --receptacle_name.ci_name as circuitID,
+ receptacle_pp.pp_peak_power as peakpower,
+ receptacle_pp.pp_peak_amps as peakamps,
+ --receptacle_pp.pp_breaker_rating as breaker_rating,
+ --redundant_receptacle_name.ci_name as redundant_circuitID,
+ --redundant_rack.ci_name as redundant_rack_name,
+ --redundant_rack.ci_logic_name as redundant_rack_logic_name,
+ --redundant_receptacle_type.cip_value as redundant_circuit_type,
+ --redundant_ci_rpdu.ci_model_name as noPR_redundant_circuit_type,
+ redundant_peak.pp_peak_power as redundant_peakpower,
+ redundant_peak.pp_peak_amps as redundant_peakamps
+ --redundant_breaker.pp_breaker_rating as redundant_breaker_rating
+
+ FROM
+ configuration_item
+ 
+ -- Join customer attributes
+left outer join
+(Select customer_relation.ci_id, customer_relation.customer_id, customer_relation.power_sold from customer_relation) customer
+on (configuration_item.ci_id = customer.ci_id)
+
+left outer join
+(Select customer_data.customer_id, customer_data.customer_company, customer_data.customer_department from customer_data) customer_details
+on (customer.customer_id = customer_details.customer_id)
+
+-- Join Cage area multi units
+left outer join
+ (Select round(cast(cast(configuration_item_property.cip_value as double precision) as numeric),2) as cageArea_sqrmeter, configuration_item_property.ci_id FROM configuration_item_property WHERE configuration_item_property.cip_class = 'CageArea') as CageArea_M
+ on (configuration_item.ci_id = CageArea_M.ci_id)
+
+left outer join
+ (Select round(cast((cast(configuration_item_property.cip_value as double precision) * 10.7639104) as numeric),2) as cageArea_sqrfeet, configuration_item_property.ci_id FROM configuration_item_property WHERE configuration_item_property.cip_class = 'CageArea') as CageArea_F
+ on (configuration_item.ci_id = CageArea_F.ci_id)
+
+--Join Rack Count
+left outer join
+(Select count(configuration_item.ci_name) racksincage, configuration_item.ci_parent_id from configuration_item where configuration_item.ci_type = 'Rack' group by configuration_item.ci_parent_id) rack_count
+on (configuration_item.ci_id = rack_count.ci_parent_id)
+
+--Join Rack attributes
+left outer join
+(Select configuration_item.ci_id, configuration_item.ci_name, configuration_item.ci_type, configuration_item.ci_parent_id, configuration_item.ci_room_label, configuration_item.ci_location, configuration_item.ci_logic_name from configuration_item where configuration_item.ci_type like 'Rack') rack_item
+on (configuration_item.ci_id = rack_item.ci_parent_id)
+
+--Join rPDU or rack-mounted power receptacle attributes
+left outer join
+(Select configuration_item.ci_id, configuration_item.ci_name, configuration_item.ci_logic_name, configuration_item.ci_model_name, configuration_item.ci_type, configuration_item.ci_parent_id from configuration_item where ci_model_name not like '%Rectifier%' AND (ci_type like ('RackMountPd%') or ci_type like ('PowerReceptacle'))) rpdu_item
+on (rack_item.ci_id = rpdu_item.ci_parent_id)
+
+-- Join rpdu or rack-mounted power receptacle powerpath looking for the power receptacle upstream
+left outer join
+(select *,
+case true 
+  when ci_parent_11_type like 'PowerReceptacle' then ci_parent_11_id
+  when ci_parent_10_type like 'PowerReceptacle' then ci_parent_10_id
+  when ci_parent_9_type like 'PowerReceptacle' then ci_parent_9_id
+  when ci_parent_8_type like 'PowerReceptacle' then ci_parent_8_id
+  when ci_parent_7_type like 'PowerReceptacle' then ci_parent_7_id
+  when ci_parent_6_type like 'PowerReceptacle' then ci_parent_6_id
+  when ci_parent_5_type like 'PowerReceptacle' then ci_parent_5_id
+  when ci_parent_4_type like 'PowerReceptacle' then ci_parent_4_id
+  when ci_parent_3_type like 'PowerReceptacle' then ci_parent_3_id
+  when ci_parent_2_type like 'PowerReceptacle' then ci_parent_2_id
+  when ci_parent_1_type like 'PowerReceptacle' then ci_parent_1_id
+  else configuration_item_power_path.ci_id
+  end as ci_parent_powerreceptacle_id
+from configuration_item_power_path) rpdu_pp
+on (rpdu_item.ci_id = rpdu_pp.ci_id)
+
+
+--Join receptacle powerpath
+left outer join
+(Select * from configuration_item_power_path) receptacle_pp
+on (rpdu_pp.ci_parent_powerreceptacle_id = receptacle_pp.ci_id)
+
+--Join receptacle name = new circuitID
+left outer join
+(Select * from configuration_item) receptacle_name
+on (receptacle_pp.ci_id = receptacle_name.ci_id)
+
+-- Join circuit type
+left outer join
+(Select configuration_item_property.ci_id, configuration_item_property.cip_value from configuration_item_property where (configuration_item_property.cip_class='Receptacle' and configuration_item_property.cip_name='receptacle_type')) receptacle_type
+on (receptacle_pp.ci_id = receptacle_type.ci_id)
+
+--Search who is paired: rpdu or power receptacle
+--Try power receptacle
+left outer join
+(Select configuration_item_property.cip_value, configuration_item_property.ci_id from configuration_item_property where cip_name like 'redundant_id') redundant_powerreceptacle
+on (redundant_powerreceptacle.ci_id =  receptacle_pp.ci_id)
+
+--Try rackPDU
+left outer join
+(Select configuration_item_property.cip_value, configuration_item_property.ci_id from configuration_item_property where cip_name like 'redundant_id') redundant_rpdu
+on (redundant_rpdu.ci_id = rpdu_item.ci_id)
+
+--Select rpdu or powerreceptacle as redundant (if both, rpdu selected)  
+left outer join
+(Select configuration_item_property.cip_value, configuration_item_property.ci_id from configuration_item_property where cip_name like 'redundant_id') redundant_id
+on redundant_id.ci_id = case
+  when redundant_powerreceptacle.cip_value is null then rpdu_item.ci_id
+  when redundant_rpdu.cip_value is null then receptacle_pp.ci_id
+  else rpdu_item.ci_id
+  end
+
+/*
+--Join redundant receptacle breaker name
+left outer join
+(Select configuration_item_power_path.pp_breaker_label, configuration_item_power_path.ci_id from configuration_item_power_path) redundant_breaker
+on (redundant_id.cip_value = redundant_breaker.ci_id)
+*/
+
+--Join redundant rpdu ID
+left outer join
+(select *,
+case true 
+  when ci_parent_11_type like 'PowerReceptacle' then ci_parent_11_id
+  when ci_parent_10_type like 'PowerReceptacle' then ci_parent_10_id
+  when ci_parent_9_type like 'PowerReceptacle' then ci_parent_9_id
+  when ci_parent_8_type like 'PowerReceptacle' then ci_parent_8_id
+  when ci_parent_7_type like 'PowerReceptacle' then ci_parent_7_id
+  when ci_parent_6_type like 'PowerReceptacle' then ci_parent_6_id
+  when ci_parent_5_type like 'PowerReceptacle' then ci_parent_5_id
+  when ci_parent_4_type like 'PowerReceptacle' then ci_parent_4_id
+  when ci_parent_3_type like 'PowerReceptacle' then ci_parent_3_id
+  when ci_parent_2_type like 'PowerReceptacle' then ci_parent_2_id
+  when ci_parent_1_type like 'PowerReceptacle' then ci_parent_1_id
+  else configuration_item_power_path.ci_id
+  end as ci_parent_powerreceptacle_id
+from configuration_item_power_path where configuration_item_power_path.ci_type like 'RackMountPd%' or configuration_item_power_path.ci_type like 'PowerReceptacle') redundant_pp_rpdu
+on (redundant_pp_rpdu.ci_id = redundant_id.cip_value)
+
+--Join redundant receptacle breaker name
+left outer join
+(Select configuration_item_power_path.pp_breaker_label, configuration_item_power_path.ci_id, configuration_item_power_path.pp_breaker_panel_label, configuration_item_power_path.pp_breaker_rating from configuration_item_power_path) redundant_breaker
+on (redundant_pp_rpdu.ci_parent_powerreceptacle_id = redundant_breaker.ci_id)
+
+--Join redundant receptacle name = new redundant circuitID
+left outer join
+(Select * from configuration_item) redundant_receptacle_name
+on (redundant_breaker.ci_id = redundant_receptacle_name.ci_id)
+
+--retrieve rack ID (parent of previous rpdu)
+left outer join
+(Select configuration_item.ci_id, configuration_item.ci_parent_id, configuration_item.ci_model_name from configuration_item) redundant_ci_rpdu
+on (redundant_pp_rpdu.ci_id = redundant_ci_rpdu.ci_id)
+
+--Join redundant rack name
+left outer join
+(Select configuration_item.ci_id, configuration_item.ci_name, configuration_item.ci_logic_name from configuration_item) redundant_rack
+on (redundant_ci_rpdu.ci_parent_id = redundant_rack.ci_id)
+
+--Join redundant circuit type
+left outer join
+(Select configuration_item_property.ci_id, configuration_item_property.cip_value from configuration_item_property where (configuration_item_property.cip_class='Receptacle' and configuration_item_property.cip_name='receptacle_type')) redundant_receptacle_type
+on (redundant_pp_rpdu.ci_parent_powerreceptacle_id = redundant_receptacle_type.ci_id)
+
+--Join redundant receptacle peak power
+left outer join
+(Select configuration_item_power_path.pp_peak_power, configuration_item_power_path.pp_peak_amps, configuration_item_power_path.ci_id from configuration_item_power_path) redundant_peak
+on (redundant_pp_rpdu.ci_parent_powerreceptacle_id = redundant_peak.ci_id)
+
+WHERE
+--customer_details.customer_company in ('xxx') and
+configuration_item.ci_type like 'Cage'
+--and rpdu_item.ci_id is not null --if you uncomment this line cages that have no rack or have rack without power receptacle (or rackPDU) will be hidden
+and (redundant_receptacle_name.ci_name is null or (receptacle_name.ci_name < redundant_receptacle_name.ci_name))
+--and configuration_item.ci_name <> 'In Row Cooler'
+yyy
+
+ORDER BY
+cage_name,
+cage_customerName
+--rack_item.ci_name
